@@ -9,7 +9,7 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/anatol/tang.go"
+	"github.com/NHAS/tang"
 	"github.com/jessevdk/go-flags"
 	"github.com/lestrrat-go/jwx/v3/jwk"
 )
