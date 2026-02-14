@@ -202,23 +202,31 @@ func (ks *KeySet) AppendKey(jwkKey jwk.Key, advertised bool) error {
 	return nil
 }
 
+func (ks *KeySet) ByThumbprint(thumbprint string) (*tangKey, error) {
+	key, found := ks.byThumbprint[thumbprint]
+	if !found {
+		return nil, fmt.Errorf("key %q not found", thumbprint)
+	}
+	return key, nil
+}
+
 // RecoverKey performs server-side recover of the ECMR algorithm
 func (ks *KeySet) RecoverKey(thp string, webKey jwk.Key) (jwk.Key, error) {
 	key, found := ks.byThumbprint[thp]
 	if !found {
-		return nil, fmt.Errorf("key '%s' not found", thp)
+		return nil, fmt.Errorf("key %q not found", thp)
 	}
 
 	if !keyValidForUse(key, []jwk.KeyOperation{jwk.KeyOpDeriveKey}) {
-		return nil, fmt.Errorf("key '%s' is not a derive key", thp)
+		return nil, fmt.Errorf("key %q is not a derive key", thp)
 	}
 	alg, ok := key.Algorithm()
 	if !ok {
-		return nil, fmt.Errorf("key '%s' does not have an algorithm", thp)
+		return nil, fmt.Errorf("key %q does not have an algorithm", thp)
 	}
 
 	if alg.String() != "ECMR" {
-		return nil, fmt.Errorf("key '%s' is not ECMR", thp)
+		return nil, fmt.Errorf("key %q is not ECMR", thp)
 	}
 
 	return key.exchange(webKey)
@@ -331,6 +339,7 @@ func signPayload(payload []byte, signKeys jwk.Set) ([]byte, error) {
 			return nil, err
 		}
 		var p bytes.Buffer
+
 		p.WriteString(base64.RawURLEncoding.EncodeToString(marshalledProtected))
 		p.WriteByte('.')
 		p.WriteString(base64.RawURLEncoding.EncodeToString(payload))

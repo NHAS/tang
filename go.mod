@@ -1,4 +1,4 @@
-module github.com/anatol/tang.go
+module github.com/NHAS/tang
 
 go 1.24.4
 
