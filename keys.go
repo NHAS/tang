@@ -46,6 +46,12 @@ type tangKey struct {
 	advertisement []byte
 }
 
+func (t *tangKey) Advertisement() []byte {
+	b := make([]byte, len(t.advertisement))
+	copy(b, t.advertisement)
+	return b
+}
+
 // NewKeySet creates a new KeySet instance
 func NewKeySet() *KeySet {
 	set := &KeySet{}
